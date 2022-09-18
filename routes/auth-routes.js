@@ -37,8 +37,7 @@ router.post(
       const tokens = jwtTokens(newUser.rows[0].user_id);
 
       res.cookie('refresh_token', tokens.refreshToken, {
-        // 30 * 24 * 60 * 60 * 1000
-        maxAge: 900000,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
       });
 
@@ -89,9 +88,9 @@ router.post('/login', async (req, res) => {
   }
 });
 
-router.get('/login/access_token', async (req, res) => {
+router.post('/login/access-token', async (req, res) => {
   try {
-    const refreshToken = req.cookies.refresh_token;
+    const { refreshToken } = req.body;
 
     if (!refreshToken) return res.status(401).json({ error: 'Пожалуйста авторизуйтесь' });
 
@@ -115,7 +114,7 @@ router.get('/login/access_token', async (req, res) => {
   }
 });
 
-router.delete('/logout', async (req, res) => {
+router.get('/logout', async (req, res) => {
   try {
     res.clearCookie('refresh_token');
     return res.status(200).json({ message: 'refresh token deleted' });
@@ -124,7 +123,7 @@ router.delete('/logout', async (req, res) => {
   }
 });
 
-router.get('/refresh_token', authorize, async (req, res) => {
+router.get('/refresh-token', authorize, async (req, res) => {
   try {
     const refreshToken = req.cookies.refresh_token;
     if (refreshToken === null) return res.status(401).json({ error: 'Null refresh token' });
@@ -142,7 +141,7 @@ router.get('/refresh_token', authorize, async (req, res) => {
   }
 });
 
-router.delete('/refresh_token', async (req, res) => {
+router.delete('/refresh-token', async (req, res) => {
   try {
     res.clearCookie('refresh_token');
     return res.status(200).json({ message: 'refresh token deleted.' });
