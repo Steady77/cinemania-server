@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken';
 
-function jwtTokens(user_id) {
+function jwtTokens(id) {
   const data = {
-    id: user_id,
+    id: id,
   };
 
   const accessToken = jwt.sign(data, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });

@@ -20,7 +20,7 @@ router.post(
       }
 
       const { email, password } = req.body;
-      const user = await pool.query('SELECT * FROM users WHERE user_email = $1', [email]);
+      const user = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
 
       if (user.rows.length > 0) {
         return res.status(401).json({ message: 'Такой пользователь уже существует' });
@@ -30,11 +30,11 @@ router.post(
       const hachedPassword = await hash(password, salt);
 
       let newUser = await pool.query(
-        'INSERT INTO users (user_email, user_password) VALUES ($1, $2) RETURNING *',
+        'INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *',
         [email, hachedPassword],
       );
 
-      const tokens = jwtTokens(newUser.rows[0].user_id);
+      const tokens = jwtTokens(newUser.rows[0].id);
 
       res.cookie('refresh_token', tokens.refreshToken, {
         maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -43,8 +43,8 @@ router.post(
 
       return res.json({
         user: {
-          id: newUser.rows[0].user_id,
-          email: newUser.rows[0].user_email,
+          id: newUser.rows[0].id,
+          email: newUser.rows[0].email,
         },
         ...tokens,
       });
@@ -58,19 +58,19 @@ router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await pool.query('SELECT * FROM users WHERE user_email = $1', [email]);
+    const user = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
 
     if (user.rows.length === 0) {
       return res.status(401).json({ message: 'Пользователь с такой почтой не найден' });
     }
 
-    const isValidPassword = await compare(password, user.rows[0].user_password);
+    const isValidPassword = await compare(password, user.rows[0].password);
 
     if (!isValidPassword) {
       return res.status(401).json({ message: 'Неверный пароль' });
     }
 
-    const tokens = jwtTokens(user.rows[0].user_id);
+    const tokens = jwtTokens(user.rows[0].id);
 
     res.cookie('refresh_token', tokens.refreshToken, {
       httpOnly: true,
@@ -78,8 +78,8 @@ router.post('/login', async (req, res) => {
 
     return res.json({
       user: {
-        id: user.rows[0].user_id,
-        email: user.rows[0].user_email,
+        id: user.rows[0].id,
+        email: user.rows[0].email,
       },
       ...tokens,
     });
@@ -97,15 +97,15 @@ router.post('/login/access-token', async (req, res) => {
     const userData = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
     if (!userData) return res.status(403).json({ error: error.message });
 
-    const user = await pool.query('SELECT * FROM users WHERE user_id = $1', [userData.id]);
+    const user = await pool.query('SELECT * FROM users WHERE id = $1', [userData.id]);
 
     let tokens = jwtTokens(userData.id);
     res.cookie('refresh_token', tokens.refreshToken, { httpOnly: true });
 
     return res.json({
       user: {
-        id: user.rows[0].user_id,
-        email: user.rows[0].user_email,
+        id: user.rows[0].id,
+        email: user.rows[0].email,
       },
       ...tokens,
     });
