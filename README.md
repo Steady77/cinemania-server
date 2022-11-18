@@ -1,6 +1,6 @@
 # Cinemania-server
 
-Backend for [Cinemania App](https://github.com/Steady77/cinemania)
+[Frontend repository](https://github.com/Steady77/cinemania)
 
 ## Stack:
 
