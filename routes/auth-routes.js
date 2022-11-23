@@ -16,7 +16,7 @@ router.post(
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({ message: errors.array() });
       }
 
       const { email, password } = req.body;
@@ -86,7 +86,7 @@ router.post('/login', async (req, res) => {
       ...tokens,
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 
@@ -94,10 +94,10 @@ router.post('/login/access-token', async (req, res) => {
   try {
     const { refreshToken } = req.body;
 
-    if (!refreshToken) return res.status(401).json({ error: 'Пожалуйста авторизуйтесь' });
+    if (!refreshToken) return res.status(401).json({ message: 'Пожалуйста авторизуйтесь' });
 
     const userData = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-    if (!userData) return res.status(403).json({ error: error.message });
+    if (!userData) return res.status(403).json({ message: error.message });
 
     const user = await pool.query('SELECT * FROM users WHERE id = $1', [userData.id]);
 
@@ -112,26 +112,26 @@ router.post('/login/access-token', async (req, res) => {
       ...tokens,
     });
   } catch (error) {
-    res.status(401).json({ error: error.message });
+    res.status(401).json({ message: error.message });
   }
 });
 
 router.get('/logout', async (req, res) => {
   try {
     res.clearCookie('refresh_token');
-    return res.status(200).json({ message: 'refresh token deleted' });
+    return res.status(200).json({ message: 'Токен удален' });
   } catch (error) {
-    res.status(401).json({ error: error.message });
+    res.status(401).json({ message: error.message });
   }
 });
 
 router.get('/refresh-token', authorize, async (req, res) => {
   try {
     const refreshToken = req.cookies.refresh_token;
-    if (refreshToken === null) return res.status(401).json({ error: 'Null refresh token' });
+    if (refreshToken === null) return res.status(401).json({ message: 'Пожалуйста авторизуйтесь' });
 
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (error, user) => {
-      if (error) return res.status(403).json({ error: error.message });
+      if (error) return res.status(403).json({ message: error.message });
 
       let tokens = jwtTokens(user);
       // { httpOnly: true, sameSite: 'none', secure: true }
@@ -139,7 +139,7 @@ router.get('/refresh-token', authorize, async (req, res) => {
       res.json(tokens);
     });
   } catch (error) {
-    res.status(401).json({ error: error.message });
+    res.status(401).json({ message: error.message });
   }
 });
 
@@ -148,7 +148,7 @@ router.delete('/refresh-token', async (req, res) => {
     res.clearCookie('refresh_token');
     return res.status(200).json({ message: 'refresh token deleted.' });
   } catch (error) {
-    res.status(401).json({ error: error.message });
+    res.status(401).json({ message: error.message });
   }
 });
 
