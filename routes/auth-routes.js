@@ -30,7 +30,7 @@ router.post(
       const hachedPassword = await hash(password, salt);
 
       let newUser = await pool.query(
-        'INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *',
+        'INSERT INTO users (email, password, created_at) VALUES ($1, $2, CURRENT_DATE) RETURNING *',
         [email, hachedPassword],
       );
 
@@ -45,6 +45,7 @@ router.post(
         user: {
           id: newUser.rows[0].id,
           email: newUser.rows[0].email,
+          isAdmin: newUser.rows[0].is_admin,
         },
         ...tokens,
       });
@@ -80,6 +81,7 @@ router.post('/login', async (req, res) => {
       user: {
         id: user.rows[0].id,
         email: user.rows[0].email,
+        isAdmin: user.rows[0].is_admin,
       },
       ...tokens,
     });
