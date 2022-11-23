@@ -6,7 +6,20 @@ const router = express.Router();
 
 router.get('/', authorize, async (req, res) => {
   try {
-    const users = await pool.query('SELECT id, email, created_at, is_admin FROM users');
+    const { keyword } = req.query;
+    let users;
+
+    if (keyword) {
+      users = await pool.query(
+        'SELECT id, email, created_at, is_admin FROM users WHERE email LIKE $1',
+        ['%' + keyword + '%'],
+      );
+    }
+
+    if (!keyword) {
+      users = await pool.query('SELECT id, email, created_at, is_admin FROM users');
+    }
+
     res.json({
       users: users.rows.map((user) => ({
         id: user.id,
