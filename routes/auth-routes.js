@@ -118,7 +118,7 @@ router.post('/login/access-token', async (req, res) => {
   }
 });
 
-router.get('/logout', async (req, res) => {
+router.get('/logout', async (res) => {
   try {
     res.clearCookie('refresh_token');
     return res.status(200).json({ message: 'Токен удален' });

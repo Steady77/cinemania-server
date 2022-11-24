@@ -33,4 +33,14 @@ router.get('/', authorize, async (req, res) => {
   }
 });
 
+router.delete('/:id', authorize, async (req, res) => {
+  try {
+    const { id } = req.params;
+    await pool.query('DELETE FROM users WHERE id = $1', [id]);
+    res.status(200).json({ message: 'Пользователь удален' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 export default router;
