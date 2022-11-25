@@ -3,7 +3,6 @@ import pool from '../db.js';
 import { genSalt, hash, compare } from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { jwtTokens } from '../utils/jwt-helpers.js';
-import { authorize } from '../middleware/authorize.js';
 import { body, validationResult } from 'express-validator';
 
 const router = express.Router();
@@ -83,6 +82,7 @@ router.post('/login', async (req, res) => {
         id: user.rows[0].id,
         email: user.rows[0].email,
         isAdmin: user.rows[0].is_admin,
+        avatar: user.rows[0].avatar,
       },
       ...tokens,
     });
@@ -110,6 +110,7 @@ router.post('/login/access-token', async (req, res) => {
         id: user.rows[0].id,
         email: user.rows[0].email,
         isAdmin: user.rows[0].is_admin,
+        avatar: user.rows[0].avatar,
       },
       ...tokens,
     });
