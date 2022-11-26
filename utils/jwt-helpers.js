@@ -5,7 +5,7 @@ function jwtTokens(id) {
     id: id,
   };
 
-  const accessToken = jwt.sign(data, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+  const accessToken = jwt.sign(data, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
   const refreshToken = jwt.sign(data, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
 
   return {
