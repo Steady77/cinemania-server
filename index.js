@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import authRouter from './routes/auth-routes.js';
 import adminRouter from './routes/admin-routes.js';
 import filesRouter from './routes/files-routes.js';
+import userRouter from './routes/user-routes.js';
 import fileUpload from 'express-fileupload';
 import path from 'path';
 
@@ -29,5 +30,6 @@ app.use(cookieParser());
 app.use('/auth', authRouter);
 app.use('/admin', adminRouter);
 app.use('/files', filesRouter);
+app.use('/user', userRouter);
 
 app.listen(PORT, () => console.log('Server started'));
