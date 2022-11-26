@@ -4,7 +4,7 @@ import { authorize } from '../middleware/authorize.js';
 
 const router = express.Router();
 
-router.get('/', authorize, async (req, res) => {
+router.get('/users', authorize, async (req, res) => {
   try {
     const { keyword } = req.query;
     let users;
@@ -33,7 +33,7 @@ router.get('/', authorize, async (req, res) => {
   }
 });
 
-router.delete('/:id', authorize, async (req, res) => {
+router.delete('/user:id', authorize, async (req, res) => {
   try {
     const { id } = req.params;
     await pool.query('DELETE FROM users WHERE id = $1', [id]);
