@@ -3,16 +3,14 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import authRouter from './routes/auth-routes.js';
-import usersRouter from './routes/users-routes.js';
+import adminRouter from './routes/admin-routes.js';
 import filesRouter from './routes/files-routes.js';
 import fileUpload from 'express-fileupload';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
 dotenv.config();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = path.resolve();
 const PORT = process.env.PORT || 5000;
 const app = express();
 
@@ -29,7 +27,7 @@ app.use(
 app.use(cookieParser());
 
 app.use('/auth', authRouter);
-app.use('/users', usersRouter);
+app.use('/admin', adminRouter);
 app.use('/files', filesRouter);
 
 app.listen(PORT, () => console.log('Server started'));
