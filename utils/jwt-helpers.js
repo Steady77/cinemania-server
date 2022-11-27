@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-function jwtTokens(id) {
+export function jwtTokens(id) {
   const data = {
     id: id,
   };
@@ -13,5 +13,3 @@ function jwtTokens(id) {
     refreshToken,
   };
 }
-
-export { jwtTokens };

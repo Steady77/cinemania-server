@@ -15,12 +15,10 @@ router.get('/profile', authorize, async (req, res) => {
     }
 
     res.json({
-      user: {
-        id: user.rows[0].id,
-        email: user.rows[0].email,
-        isAdmin: user.rows[0].is_admin,
-        avatar: user.rows[0].avatar,
-      },
+      id: user.rows[0].id,
+      email: user.rows[0].email,
+      isAdmin: user.rows[0].is_admin,
+      avatar: user.rows[0].avatar,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
