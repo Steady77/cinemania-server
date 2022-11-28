@@ -24,17 +24,18 @@ router.put('/upload', authorize, async (req, res) => {
     const oldUserAvatar = await pool.query('SELECT avatar FROM users WHERE id = $1', [id]);
     const oldImageName = oldUserAvatar.rows[0].avatar;
 
-    removeFile(uploadPath, oldImageName);
+    removeFile(__dirname, oldImageName);
     makeDir(uploadPath, id);
 
     const filePath = path.join(uploadPath, id, newImageName);
     image.mv(filePath);
 
-    const newUserAvatar = path.join(id, newImageName);
+    const newPath = path.join('/upload', id, newImageName);
+    const newUserAvatar = newPath.split(path.sep).join(path.posix.sep);
 
     await pool.query('UPDATE users SET avatar = $1 WHERE id = $2', [newUserAvatar, id]);
 
-    res.status(200).json({ message: 'Файл успешно загружен' });
+    res.status(200).json({ message: 'Файл успешно загружен', url: newUserAvatar });
   } catch (error) {
     res.status(500).json({ message: 'Ошибка при загрузке файла', error: error.message });
   }
