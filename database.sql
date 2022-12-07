@@ -9,3 +9,9 @@ CREATE TABLE users (
   created_at DATE NOT NULL
 );
 
+CREATE TABLE favorites (
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  film_id VARCHAR(256) NOT NULL,
+  user_id uuid REFERENCES users(id)
+);
+
