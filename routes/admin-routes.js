@@ -20,7 +20,7 @@ router.get('/users', authorize, async (req, res) => {
       users = await pool.query('SELECT id, email, created_at, is_admin FROM users');
     }
 
-    res.json({
+    res.status(200).json({
       users: users.rows.map((user) => ({
         id: user.id,
         email: user.email,

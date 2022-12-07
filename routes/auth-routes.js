@@ -40,11 +40,12 @@ router.post(
         httpOnly: true,
       });
 
-      return res.json({
+      return res.status(200).json({
         user: {
           id: newUser.rows[0].id,
           email: newUser.rows[0].email,
           isAdmin: newUser.rows[0].is_admin,
+          avatar: newUser.rows[0].avatar,
         },
         ...tokens,
       });
@@ -77,7 +78,7 @@ router.post('/login', async (req, res) => {
       sameSite: 'none',
     });
 
-    return res.json({
+    return res.status(200).json({
       user: {
         id: user.rows[0].id,
         email: user.rows[0].email,
@@ -105,7 +106,7 @@ router.post('/login/access-token', async (req, res) => {
     let tokens = jwtTokens(userData.id);
     res.cookie('refresh_token', tokens.refreshToken, { httpOnly: true, sameSite: 'none' });
 
-    return res.json({
+    return res.status(200).json({
       user: {
         id: user.rows[0].id,
         email: user.rows[0].email,
