@@ -58,4 +58,41 @@ router.put('/profile', authorize, async (req, res) => {
   }
 });
 
+router.get('/profile/favorites', authorize, async (req, res) => {
+  const { id } = req.user;
+
+  try {
+    const data = await pool.query('SELECT * FROM favorites WHERE user_id = $1', [id]);
+    const favoritesIds = data.rows.map((obj) => obj.film_id);
+
+    res.status(200).json(favoritesIds);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.post('/profile/favorites', authorize, async (req, res) => {
+  const { id } = req.user;
+  const { filmId } = req.body;
+
+  if (id && filmId) {
+    try {
+      const data = await pool.query('SELECT * FROM favorites WHERE user_id = $1', [id]);
+      const favoritesIds = data.rows.map((obj) => obj.film_id);
+
+      if (!favoritesIds.includes(filmId)) {
+        await pool.query('INSERT INTO favorites (film_id, user_id) VALUES ($1, $2)', [filmId, id]);
+        res.status(200).json({ message: 'Фильм добавлен в избранное' });
+      } else {
+        await pool.query('DELETE FROM favorites WHERE film_id = $1', [filmId]);
+        res.status(200).json({ message: 'Фильм удален из избранного' });
+      }
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  } else {
+    res.status(400).json({ message: 'Нет данных или не авторизованы' });
+  }
+});
+
 export default router;
