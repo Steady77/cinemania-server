@@ -8,6 +8,7 @@ import filesRouter from './routes/files-router.js';
 import userRouter from './routes/user-router.js';
 import fileUpload from 'express-fileupload';
 import path from 'path';
+import { exeption } from './middleware/exeption.js';
 
 dotenv.config();
 
@@ -33,5 +34,7 @@ app.use('/auth', authRouter);
 app.use('/admin', adminRouter);
 app.use('/files', filesRouter);
 app.use('/user', userRouter);
+
+app.use(exeption);
 
 app.listen(PORT, () => console.log('Server started'));
