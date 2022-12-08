@@ -2,10 +2,10 @@ import express, { json } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
-import authRouter from './routes/auth-routes.js';
-import adminRouter from './routes/admin-routes.js';
-import filesRouter from './routes/files-routes.js';
-import userRouter from './routes/user-routes.js';
+import authRouter from './routes/auth-router.js';
+import adminRouter from './routes/admin-router.js';
+import filesRouter from './routes/files-router.js';
+import userRouter from './routes/user-router.js';
 import fileUpload from 'express-fileupload';
 import path from 'path';
 
