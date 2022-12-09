@@ -1,24 +1,14 @@
-import pool from '../db.js';
+import AdminService from '../services/admin-service.js';
 
 class AdminController {
-  async getAllUsers(req, res) {
+  async getAllUsers(req, res, next) {
     try {
       const { keyword } = req.query;
-      let users;
 
-      if (keyword) {
-        users = await pool.query(
-          'SELECT id, email, created_at, is_admin FROM users WHERE email LIKE $1',
-          ['%' + keyword + '%'],
-        );
-      }
-
-      if (!keyword) {
-        users = await pool.query('SELECT id, email, created_at, is_admin FROM users');
-      }
+      const users = await AdminService.getAllUsers(keyword);
 
       res.status(200).json({
-        users: users.rows.map((user) => ({
+        users: users.map((user) => ({
           id: user.id,
           email: user.email,
           isAdmin: user.is_admin,
@@ -26,17 +16,19 @@ class AdminController {
         })),
       });
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      next(error);
     }
   }
 
-  async deleteUser(req, res) {
+  async deleteUser(req, res, next) {
     try {
       const { id } = req.params;
-      await pool.query('DELETE FROM users WHERE id = $1', [id]);
+
+      await AdminService.deleteUser(id);
+
       res.status(200).json({ message: 'Пользователь удален' });
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      next(error);
     }
   }
 }
