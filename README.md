@@ -7,4 +7,4 @@
 - NodeJS
 - Express
 - JWT
-- PostgreSQL ([ElephantSQL](https://www.elephantsql.com/))
+- PostgreSQL
