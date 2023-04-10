@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.get('/profile', authorize, UserController.getProfile);
 router.put('/profile', authorize, UserController.updateProfile);
+router.delete('/profile/:id', authorize, UserController.deleteProfile);
 router.get('/profile/favorites', authorize, UserController.getFavorites);
 router.post('/profile/favorites', authorize, UserController.toggleFavorites);
 
