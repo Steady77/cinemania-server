@@ -15,3 +15,9 @@ CREATE TABLE favorites (
   user_id uuid REFERENCES users(id)
 );
 
+CREATE TABLE watch_history (
+  id SERIAL PRIMARY KEY,
+  film_id VARCHAR(256) NOT NULL,
+  user_id uuid REFERENCES users(id)
+);
+
