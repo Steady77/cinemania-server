@@ -60,6 +60,30 @@ class UserController {
 			next(error);
 		}
 	}
+
+	async getWatchHistory(req, res, next) {
+		try {
+			const { id } = req.user;
+			const watchHistory = await UserService.getWatchHistory(id);
+
+			res.status(200).json(watchHistory);
+		} catch (error) {
+			next(error);
+		}
+	}
+
+	async setWatchHistory(req, res, next) {
+		try {
+			const { id } = req.user;
+			const { filmId } = req.body;
+
+			await UserService.setWatchHistory(id, filmId);
+
+			res.status(200).json({ message: 'История просмотров обновлена' });
+		} catch (error) {
+			next(error);
+		}
+	}
 }
 
 export default new UserController();

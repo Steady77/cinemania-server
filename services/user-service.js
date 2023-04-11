@@ -45,6 +45,7 @@ class UserController {
 
 	async deleteProfile(id) {
 		await pool.query('DELETE FROM favorites WHERE user_id = $1', [id]);
+		await pool.query('DELETE FROM watch_history WHERE user_id = $1', [id]);
 		await pool.query('DELETE FROM users WHERE id = $1', [id]);
 	}
 
@@ -64,6 +65,39 @@ class UserController {
 				await pool.query('INSERT INTO favorites (film_id, user_id) VALUES ($1, $2)', [filmId, id]);
 			} else {
 				await pool.query('DELETE FROM favorites WHERE film_id = $1', [filmId]);
+			}
+		} else {
+			throw ApiError.UnauthorizedError();
+		}
+	}
+
+	async getWatchHistory(id) {
+		const data = await pool.query(
+			'SELECT film_id FROM watch_history WHERE user_id = $1 ORDER BY id DESC LIMIT 10',
+			[id],
+		);
+		const totalWatched = await pool.query('SELECT film_id FROM watch_history WHERE user_id = $1', [
+			id,
+		]);
+
+		const watchHistory = data.rows.map((obj) => obj.film_id);
+
+		return {
+			watchHistory,
+			totalWatched: totalWatched.rowCount,
+		};
+	}
+
+	async setWatchHistory(id, filmId) {
+		if (id && filmId) {
+			const data = await pool.query('SELECT * FROM watch_history WHERE user_id = $1', [id]);
+			const filmIds = data.rows.map((obj) => obj.film_id);
+
+			if (!filmIds.includes(filmId)) {
+				await pool.query('INSERT INTO watch_history (film_id, user_id) VALUES ($1, $2)', [
+					filmId,
+					id,
+				]);
 			}
 		} else {
 			throw ApiError.UnauthorizedError();
